@@ -2,9 +2,10 @@ from json.decoder import JSONDecodeError
 
 import pytest
 import requests
+from lib.base_case import BaseCase
+from lib.assertions import Assertions
 
-
-class TestUserAuth:
+class TestUserAuth(BaseCase):
     exclude_params = {
         'no_cookie',
         'no_token'
@@ -17,13 +18,10 @@ class TestUserAuth:
         }
 
         response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
-        assert "auth_sid" in response1.cookies, "There is no auth_sid in response1 cookie"
-        assert "x-csrf-token" in response1.headers, "There is no x-csrf-token in response1 headers"
-        assert "user_id" in response1.json(), "There is no user_id in response1"
 
-        self.auth_sid = response1.cookies.get('auth_sid')
-        self.csrf_token = response1.headers.get("x-csrf-token")
-        self.user_id = response1.json()["user_id"]
+        self.auth_sid = self.get_cookie(response1, 'auth_sid')
+        self.csrf_token = self.get_header(response1, "x-csrf-token")
+        self.user_id = self.get_json_vallue(response1, "user_id")
 
     def test_user_auth(self):
         response2 = requests.get(
@@ -32,11 +30,12 @@ class TestUserAuth:
             cookies={"auth_sid": self.auth_sid}
         )
 
-        assert "user_id" in response2.json(), "There is no user_id in response2"
-        user_id2 = response2.json()["user_id"]
-        assert self.user_id==user_id2, "user_id2 are different"
-
-
+        Assertions.assert_json_value_by_name(
+            response2,
+            "user_id",
+            self.user_id,
+            "user_id are different"
+    )
 
     @pytest.mark.parametrize('condition',exclude_params)
     def test_negative_auth_check(self, condition):
@@ -51,10 +50,12 @@ class TestUserAuth:
                 cookies={"auth_sid": self.auth_sid}
             )
 
-        assert "user_id" in response2.json(), "There is no user_id in response2"
-        user_id2 = response2.json()["user_id"]
-        assert user_id2==0, f"user_id2 is not 0 in response2, condition = {condition}"
-
+        Assertions.assert_json_value_by_name(
+            response2,
+            "user_id",
+            0,
+            f"user_id is not 0 in response, condition = {condition}"
+    )
 
 
 
