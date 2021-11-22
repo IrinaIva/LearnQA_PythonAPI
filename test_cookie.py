@@ -2,7 +2,6 @@ from json.decoder import JSONDecodeError
 
 import pytest
 import requests
-import requests
 
 
 class TestCookie:
