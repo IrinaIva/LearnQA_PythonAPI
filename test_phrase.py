@@ -3,7 +3,6 @@ from json.decoder import JSONDecodeError
 import pytest
 import requests
 
-
 class TestPhrase:
     def test_phrase(self):
 
