@@ -2,9 +2,14 @@ from json.decoder import JSONDecodeError
 
 import pytest
 import requests
+from lib.base_case import BaseCase
+from lib.assertions import Assertions
 
+# {"user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) "
+#               "AppleWebKit\/537.36 (KHTML, like Gecko) "
+              # "Chrome\/96.0.4664.45 Safari\/537.36","platform":"Web","browser":"Chrome","device":"No"}
 
-class TestUserAgent:
+class TestUserAgent(BaseCase):
     exclude_params = {
         'no_cookie',
         'no_token'
@@ -16,7 +21,7 @@ class TestUserAgent:
             'password': '1234'
         }
 
-        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+        response1 = requests.post("https://playground.learnqa.ru/ajax/api/user_agent_check", data=data)
         assert "auth_sid" in response1.cookies, "There is no auth_sid in response1 cookie"
         assert "x-csrf-token" in response1.headers, "There is no x-csrf-token in response1 headers"
         assert "user_id" in response1.json(), "There is no user_id in response1"

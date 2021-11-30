@@ -17,7 +17,10 @@ class TestUserAuth(BaseCase):
             'password': '1234'
         }
 
-        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+        response1 = requests.get(
+            "https://playground.learnqa.ru/ajax/api/user_agent_check",
+            headers={"User-Agent": "Some value here"}
+        )
 
         self.auth_sid = self.get_cookie(response1, 'auth_sid')
         self.csrf_token = self.get_header(response1, "x-csrf-token")
