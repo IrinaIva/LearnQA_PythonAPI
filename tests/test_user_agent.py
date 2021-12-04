@@ -22,9 +22,7 @@ class TestUserAgent(BaseCase):
                                  headers={
                                      "User-Agent": condition}
                                  )
-        # user_agent = BaseCase.get_json_vallue(responseM, "user_agent")
-        # print(user_agent)
-
+        
         if "Mobile" in condition:
             Assertions.assert_json_value_by_name(
                 responseM,
