@@ -11,3 +11,6 @@ class Assertions:
 
         assert name in response_as_dict, f"Response json does not have key {name}"
         assert response_as_dict[name] == expected_value, error_message
+
+
+
