@@ -5,61 +5,132 @@ import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
-# {"user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) "
-#               "AppleWebKit\/537.36 (KHTML, like Gecko) "
-              # "Chrome\/96.0.4664.45 Safari\/537.36","platform":"Web","browser":"Chrome","device":"No"}
 
 class TestUserAgent(BaseCase):
     exclude_params = {
-        'no_cookie',
-        'no_token'
+        "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30",
+        "Mozilla/5.0 (iPad; CPU OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/91.0.4472.77 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36 Edg/91.0.100.0",
+        "Mozilla/5.0 (iPad; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
     }
-
-    def setup(self):
-        data = {
-            'email': 'vinkotov@example.com',
-            'password': '1234'
-        }
-
-        response1 = requests.post("https://playground.learnqa.ru/ajax/api/user_agent_check", data=data)
-        assert "auth_sid" in response1.cookies, "There is no auth_sid in response1 cookie"
-        assert "x-csrf-token" in response1.headers, "There is no x-csrf-token in response1 headers"
-        assert "user_id" in response1.json(), "There is no user_id in response1"
-
-        self.auth_sid = response1.cookies.get('auth_sid')
-        self.csrf_token = response1.headers.get("x-csrf-token")
-        self.user_id = response1.json()["user_id"]
-
-    def test_user_auth(self):
-        response2 = requests.get(
-            "https://playground.learnqa.ru/api/user/auth",
-            headers={"x-csrf-token": self.csrf_token},
-            cookies={"auth_sid": self.auth_sid}
-        )
-
-        assert "user_id" in response2.json(), "There is no user_id in response2"
-        user_id2 = response2.json()["user_id"]
-        assert self.user_id==user_id2, "user_id2 are different"
-
 
 
     @pytest.mark.parametrize('condition',exclude_params)
-    def test_negative_auth_check(self, condition):
-        if condition=="no_cookie":
-            response2 = requests.get(
-                "https://playground.learnqa.ru/api/user/auth",
-                headers={"x-csrf-token": self.csrf_token}
+    def test_user_auth_check_platform(self, condition):
+        responseM = requests.get("https://playground.learnqa.ru/ajax/api/user_agent_check",
+                                 headers={
+                                     "User-Agent": condition}
+                                 )
+        # user_agent = BaseCase.get_json_vallue(responseM, "user_agent")
+        # print(user_agent)
+
+        if "Mobile" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "platform",
+                "Mobile",
+                f"platform is not Mobile in response, condition = {condition}"
+            )
+        elif "Googlebot" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "platform",
+                "Googlebot",
+                f"platform is not Googlebot in response, condition = {condition}"
+            )
+        elif "Windows" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "platform",
+                "Web",
+                f"platform is not Web in response, condition = {condition}"
             )
         else:
-            response2 = requests.get(
-                "https://playground.learnqa.ru/api/user/auth",
-                cookies={"auth_sid": self.auth_sid}
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "platform",
+                "Unknown",
+                f"platform is not Unknown in response, condition = {condition}"
             )
 
-        assert "user_id" in response2.json(), "There is no user_id in response2"
-        user_id2 = response2.json()["user_id"]
-        assert user_id2==0, f"user_id2 is not 0 in response2, condition = {condition}"
+
+    @pytest.mark.parametrize('condition', exclude_params)
+    def test_user_auth_check_device(self, condition):
+        responseM = requests.get("https://playground.learnqa.ru/ajax/api/user_agent_check",
+                                 headers={
+                                     "User-Agent": condition}
+                                 )
+
+        if "Android" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "device",
+                "Android",
+                f"device is not Android in response, condition = {condition}"
+            )
+        elif "iPhone" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "device",
+                "iPhone",
+                f"device is not iPhone in response, condition = {condition}"
+            )
+        elif "iPad" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "device",
+                "iOS",
+                f"device is not iOS in response, condition = {condition}"
+            )
+        elif "Edg" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "device",
+                "No",
+                f"device is not No in response, condition = {condition}"
+            )
+        else:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "device",
+                "Unknown",
+                f"device is not Unknown in response, condition = {condition}"
+            )
 
 
+    @pytest.mark.parametrize('condition', exclude_params)
+    def test_user_auth_check_browser(self, condition):
+        responseM = requests.get("https://playground.learnqa.ru/ajax/api/user_agent_check",
+                                 headers={
+                                     "User-Agent": condition}
+                                 )
 
-
+        if "Chrome" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "browser",
+                "Chrome",
+                f"browser is not Chrome in response, condition = {condition}"
+            )
+        elif "CriOS" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "browser",
+                "Chrome",
+                f"browser is not Chrome in response, condition = {condition}"
+            )
+        elif "like Gecko" in condition:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "browser",
+                "No",
+                f"browser is not No in response, condition = {condition}"
+            )
+        else:
+            Assertions.assert_json_value_by_name(
+                responseM,
+                "browser",
+                "Unknown",
+                f"browser is not Unknown in response, condition = {condition}"
+            )
