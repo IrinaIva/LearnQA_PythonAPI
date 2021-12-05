@@ -6,12 +6,11 @@ from datetime import datetime
 
 
 class TestUserGet(BaseCase):
-    class TestUserRegister(BaseCase):
-        def setup(self):
-            base_part = "learnqa"
-            domain = "example.com"
-            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
-            self.email = f"{base_part}{random_part}@{domain}"
+    def setup(self):
+         base_part = "learnqa"
+         domain = "example.com"
+         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+         self.email = f"{base_part}{random_part}@{domain}"
 
     def test_get_user_details_not_auth(self):
         response = requests.get(f"https://playground.learnqa.ru/api/user/2")
