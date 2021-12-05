@@ -1,4 +1,6 @@
 import json.decoder
+import random
+import string
 
 from requests import Response
 
@@ -21,3 +23,8 @@ class BaseCase:
         assert name in response_as_dict, f"Response json does not have key {name}"
 
         return response_as_dict[name]
+
+    def generate_random_string(length):
+        letters = string.ascii_lowercase
+        rand_string = ''.join(random.choice(letters) for i in range(length))
+        return rand_string
