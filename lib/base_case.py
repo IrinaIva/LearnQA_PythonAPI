@@ -1,6 +1,7 @@
 import json.decoder
 import random
 import string
+from datetime import datetime
 
 from requests import Response
 
@@ -28,3 +29,27 @@ class BaseCase:
         letters = string.ascii_lowercase
         rand_string = ''.join(random.choice(letters) for i in range(length))
         return rand_string
+
+    def prepare_registration_data(self, email=None):
+        if email is None:
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}@{domain}"
+
+        data = {
+            'email': email,
+            'username': 'learnqa',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'password': '1234'
+        }
+        return data
+
+    def prepare_invalid_email(self):
+        base_part = "learnqa"
+        domain = "example.com"
+        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+        email = f"{base_part}{random_part}@{domain}"
+        invalid_email = f"{base_part}{random_part}{domain}"
+        return invalid_email

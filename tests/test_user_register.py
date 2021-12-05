@@ -24,38 +24,21 @@ class TestUserRegister(BaseCase):
     }
 
     def test_create_user_successfully(self):
-        data = {
-            'email': self.email,
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'password': '1234'
-        }
+        data = self.prepare_registration_data()
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
         Assertions.assert_json_has_key(response, "id")
         Assertions.assert_status_code(response, 200)
 
     def test_create_user_with_existing_email(self):
         email='vinkotov@example.com'
-        data = {
-            'email': email,
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'password': '1234'
-        }
+        data = self.prepare_registration_data(email)
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
         Assertions.assert_status_code(response, 400)
         assert response.content.decode("utf-8") == f"Users with email '{email}' already exists", f"content = {response.content}"
 
     def test_create_user_invalid_email(self):
-        data = {
-            'email': self.invalid_email,
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'password': '1234'
-        }
+        email = self.invalid_email
+        data = self.prepare_registration_data(email)
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
         Assertions.assert_status_code(response, 400)
         assert response.content.decode("utf-8") == "Invalid email format", f"content = {response.content}"
@@ -63,13 +46,7 @@ class TestUserRegister(BaseCase):
     @pytest.mark.parametrize('condition', params)
     def test_create_user_missing_field(self, condition):
 
-        data = {
-            'email': self.email,
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'password': '1234'
-        }
+        data = self.prepare_registration_data()
         if condition == "email":
             del data['email']
         elif condition == "username":
