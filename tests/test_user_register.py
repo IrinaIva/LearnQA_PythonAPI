@@ -64,7 +64,7 @@ class TestUserRegister(BaseCase):
     def test_create_user_missing_field(self, condition):
 
         data = {
-            'email': self.invalid_email,
+            'email': self.email,
             'username': 'learnqa',
             'firstName': 'learnqa',
             'lastName': 'learnqa',
