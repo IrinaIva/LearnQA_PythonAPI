@@ -1,5 +1,6 @@
 from json.decoder import JSONDecodeError
 import requests
+
 # 1
 response1 = requests.post("https://playground.learnqa.ru/api/compare_query_type")
 print(response1.text)
