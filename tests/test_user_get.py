@@ -3,8 +3,9 @@ import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
+import allure
 
-
+@allure.epic("Get cases")
 class TestUserGet(BaseCase):
     def setup(self):
          base_part = "learnqa"
@@ -18,6 +19,7 @@ class TestUserGet(BaseCase):
         keys = ["email", "firstName", "lastName", "password"]
         Assertions.assert_json_has_no_keys(response, keys)
 
+    @allure.description("This test gets auth user data")
     def test_get_user_details_auth_as_same_user(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -34,7 +36,9 @@ class TestUserGet(BaseCase):
         keys = ["username", "email", "firstName", "lastName"]
         Assertions.assert_json_has_keys(response2, keys)
 
-
+    @allure.testcase("Tc link")
+    @allure.issue("Bug link")
+    @allure.description("This test gets another user data")
     def test_get_user_details_auth_as_another_user(self):
         data = {
             'email': 'vinkotov@example.com',

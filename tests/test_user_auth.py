@@ -1,5 +1,6 @@
 from json.decoder import JSONDecodeError
 
+import allure
 import pytest
 import requests
 from lib.base_case import BaseCase
@@ -41,6 +42,7 @@ class TestUserAuth(BaseCase):
             "user_id are different"
     )
 
+    @allure.severity(allure.severity_level.NORMAL)
     @pytest.mark.parametrize('condition',exclude_params)
     def test_negative_auth_check(self, condition):
         if condition=="no_cookie":

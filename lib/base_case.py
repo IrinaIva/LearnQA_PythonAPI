@@ -1,16 +1,20 @@
 import json.decoder
 import random
 import string
+
+import allure
 from datetime import datetime
 
 from requests import Response
 
 
 class BaseCase:
+    @allure.step("Get cookie")
     def get_cookie(self, response: Response, cookie_name):
         assert cookie_name in response.cookies, f"Cannot find cookie {cookie_name} in response"
         return response.cookies[cookie_name]
 
+    @allure.step("Get header")
     def get_header(self, response: Response, header_name):
         assert header_name in response.headers, f"Cannot find header {header_name} in response"
         return response.headers[header_name]

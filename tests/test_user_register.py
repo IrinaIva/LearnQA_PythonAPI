@@ -1,5 +1,6 @@
 import pytest
 import requests
+import allure
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from datetime import datetime
@@ -36,6 +37,7 @@ class TestUserRegister(BaseCase):
         Assertions.assert_status_code(response, 400)
         assert response.content.decode("utf-8") == f"Users with email '{email}' already exists", f"content = {response.content}"
 
+    @allure.story('Story 4545')
     def test_create_user_invalid_email(self):
         email = self.invalid_email
         data = self.prepare_registration_data(email)

@@ -75,6 +75,7 @@ class TestUserDelete(BaseCase):
         Assertions.assert_status_code(response3, 404)
         assert response3.content.decode("utf-8") == f"User not found", f"User is found = {response3.content}"
 
+    @pytest.mark.skipif('2 + 2 != 5', reason='This test is skipped by a triggered condition in @pytest.mark.skipif')
     def test_delete_just_created_user_auth_as_another_user(self):
         # REGISTER
         register_data = self.prepare_registration_data()
